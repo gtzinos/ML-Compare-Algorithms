@@ -5,9 +5,12 @@ from sklearn.metrics import precision_recall_fscore_support
 from sklearn.model_selection import cross_validate, cross_val_predict, train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsRegressor, NearestNeighbors, KNeighborsClassifier, RadiusNeighborsClassifier
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.svm import SVC
+import matplotlib.pyplot as plot
 
+import numpy
+numpy.set_printoptions(threshold=numpy.nan)
 
 def importFile(fileName):
     with open(fileName, 'r') as f:
@@ -36,6 +39,14 @@ def oneHotEncoding(data, indexes: []):
 
     return data
 
+def normalizeArray(array, indexes):
+    for index in indexes:
+        scaler = MinMaxScaler()
+        data = array[:,index].reshape(-1, 1)
+        scaler.fit(data)
+        array[:, index] = np.array(scaler.transform(data).reshape(1, -1))
+
+    return array
 
 def startTraining(algorithm, train_x, train_y, test_x):
     split_x_train, split_x_test, split_y_train, split_y_test = train_test_split(train_x, train_y, test_size=0.3,
@@ -55,6 +66,8 @@ def startTraining(algorithm, train_x, train_y, test_x):
 
     # predict unknown set
     predictions = algorithm.predict(test_x)
+
+    #ShowGraph(algorithm)
     # print(predictions)
 
     # scoring = ['recall', 'f1', 'accuracy']
@@ -69,6 +82,15 @@ def startTraining(algorithm, train_x, train_y, test_x):
     # cross_val_predict(algorithm, test_x)
     # print(predictions)
 
+def ShowGraph(algorithm):
+
+    plot.plot(algorithm.history['loss'])
+    plot.plot(algorithm.history['val_loss'])
+    plot.title('model loss')
+    plot.ylabel('loss')
+    plot.xlabel('epoch')
+    plot.legend(['train', 'test'], loc='upper left')
+    plot.show()
 
 def RunRandomForestClassifier(train_x, train_y, test_x):
     print("Random Forest")
@@ -151,6 +173,10 @@ def main():
     # encode strings to numeric
     compined_sets = oneHotEncoding(compined_sets, [1, 5, 7, 8])
 
+    # Normalize data
+    compined_sets = normalizeArray(compined_sets, [0, 1, 4])
+
+    #print(compined_sets[0])
     # split sets
     train_x = compined_sets[0: trainLength]
     test_x = compined_sets[trainLength:]
