@@ -1,16 +1,26 @@
 import csv
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 from sklearn.model_selection import cross_validate, cross_val_predict, train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsRegressor, NearestNeighbors, KNeighborsClassifier, RadiusNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.svm import SVC
 import matplotlib.pyplot as plot
 
 import numpy
+
 numpy.set_printoptions(threshold=numpy.nan)
+
+import sklearn
+
+print('The scikit-learn version is {}.'.format(sklearn.__version__))
+
 
 def importFile(fileName):
     with open(fileName, 'r') as f:
@@ -39,24 +49,28 @@ def oneHotEncoding(data, indexes: []):
 
     return data
 
+
 def normalizeArray(array, indexes):
     for index in indexes:
         scaler = MinMaxScaler()
-        data = array[:,index].reshape(-1, 1)
+        data = array[:, index].reshape(-1, 1)
         scaler.fit(data)
         array[:, index] = np.array(scaler.transform(data).reshape(1, -1))
 
     return array
+
 
 def startTraining(algorithm, train_x, train_y, test_x):
     split_x_train, split_x_test, split_y_train, split_y_test = train_test_split(train_x, train_y, test_size=0.3,
                                                                                 random_state=10)
 
     algorithm.fit(split_x_train, split_y_train)
-    accuracy = algorithm.score(split_x_test, split_y_test)
+    #accuracy = algorithm.score(split_x_test, split_y_test)
     predictions = algorithm.predict(split_x_test)
 
-    precision, recall, fscore, support = precision_recall_fscore_support(split_y_test, predictions.round(),
+    accuracy = accuracy_score(split_y_test, predictions)
+
+    precision, recall, fscore, support = precision_recall_fscore_support(split_y_test, predictions,
                                                                          average='macro')
     print(
         "Validation accuracy: %f -- precision: %f -- recall: %f -- fscore: %f" % (accuracy, precision, recall, fscore))
@@ -67,7 +81,7 @@ def startTraining(algorithm, train_x, train_y, test_x):
     # predict unknown set
     predictions = algorithm.predict(test_x)
 
-    #ShowGraph(algorithm)
+    # ShowGraph(algorithm)
     # print(predictions)
 
     # scoring = ['recall', 'f1', 'accuracy']
@@ -82,8 +96,8 @@ def startTraining(algorithm, train_x, train_y, test_x):
     # cross_val_predict(algorithm, test_x)
     # print(predictions)
 
-def ShowGraph(algorithm):
 
+def ShowGraph(algorithm):
     plot.plot(algorithm.history['loss'])
     plot.plot(algorithm.history['val_loss'])
     plot.title('model loss')
@@ -91,6 +105,7 @@ def ShowGraph(algorithm):
     plot.xlabel('epoch')
     plot.legend(['train', 'test'], loc='upper left')
     plot.show()
+
 
 def RunRandomForestClassifier(train_x, train_y, test_x):
     print("Random Forest")
@@ -104,30 +119,40 @@ def RunRandomForestClassifier(train_x, train_y, test_x):
     startTraining(algorithm, train_x, train_y, test_x)
 
 
-def RunGaussianNB(train_x, train_y, test_x):
-    print("GaussianNB")
-    algorithm = GaussianNB()
-
-    startTraining(algorithm, train_x, train_y, test_x)
-
-
 def RunKNeighborsClassifier(train_x, train_y, test_x):
     print("KNeighborsClassifier")
-    algorithm = KNeighborsClassifier(n_neighbors=2)
+    algorithm = KNeighborsClassifier()
 
     startTraining(algorithm, train_x, train_y, test_x)
 
 
-def RunKNeighborsRegressor(train_x, train_y, test_x):
-    print("KNeighborsRegressor")
-    algorithm = KNeighborsRegressor(n_neighbors=5)
+def RunGaussianProcessClassifier(train_x, train_y, test_x):
+    print("GaussianProcessClassifier")
+    algorithm = GaussianProcessClassifier(1.0 * RBF(1.0))
 
     startTraining(algorithm, train_x, train_y, test_x)
 
+    # KNeighborsClassifier(3),
+    # SVC(kernel="linear", C=0.025),
+    # SVC(gamma=2, C=1),
+    # GaussianProcessClassifier(1.0 * RBF(1.0)),
+    # DecisionTreeClassifier(max_depth=5),
+    # RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+    # MLPClassifier(alpha=1),
+    # AdaBoostClassifier(),
+    # GaussianNB(),
+    # QuadraticDiscriminantAnalysis()]
 
-def RunSVC(train_x, train_y, test_x):
-    print("SVC")
-    algorithm = SVC()
+
+def RunKMeans(train_x, train_y, test_x):
+    print("KMeans")
+    algorithm = KMeans(2)
+
+    startTraining(algorithm, train_x, train_y, test_x)
+
+def RunAdaBoostClassifier(train_x, train_y, test_x):
+    print("AdaBoostClassifier")
+    algorithm = AdaBoostClassifier()
 
     startTraining(algorithm, train_x, train_y, test_x)
 
@@ -176,16 +201,25 @@ def main():
     # Normalize data
     compined_sets = normalizeArray(compined_sets, [0, 1, 4])
 
-    #print(compined_sets[0])
+    # print(compined_sets[0])
     # split sets
     train_x = compined_sets[0: trainLength]
     test_x = compined_sets[trainLength:]
 
+    print("------------------------------------------------------")
+    print("            Classification Algorithms")
+    print("------------------------------------------------------")
+
     RunRandomForestClassifier(train_x, train_y, test_x)
-    RunGaussianNB(train_x, train_y, test_x)
-    RunSVC(train_x, train_y, test_x)
     RunKNeighborsClassifier(train_x, train_y, test_x)
-    RunKNeighborsRegressor(train_x, train_y, test_x)
+    RunAdaBoostClassifier(train_x, train_y, test_x)
+    RunGaussianProcessClassifier(train_x, train_y, test_x)
+
+    print("------------------------------------------------------")
+    print("            Clustering algorithm")
+    print("------------------------------------------------------")
+
+    RunKMeans(train_x, train_y, test_x)
 
 
 if __name__ == "__main__":
