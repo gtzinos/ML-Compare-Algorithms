@@ -1,25 +1,23 @@
 import csv
+
+import matplotlib.pyplot as plot
+import numpy
 import numpy as np
-from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-from sklearn.model_selection import cross_validate, cross_val_predict, train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsRegressor, NearestNeighbors, KNeighborsClassifier, RadiusNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.svm import SVC
-import matplotlib.pyplot as plot
-
-import numpy
+from sklearn.tree import tree
 
 numpy.set_printoptions(threshold=numpy.nan)
 
-import sklearn
-
-print('The scikit-learn version is {}.'.format(sklearn.__version__))
+# constants
+CONST_RANDOM_STATE = 1000
 
 
 def importFile(fileName):
@@ -50,7 +48,7 @@ def oneHotEncoding(data, indexes: []):
     return data
 
 
-def normalizeArray(array, indexes):
+def normalize_array(array, indexes):
     for index in indexes:
         scaler = MinMaxScaler()
         data = array[:, index].reshape(-1, 1)
@@ -62,10 +60,10 @@ def normalizeArray(array, indexes):
 
 def startTraining(algorithm, train_x, train_y, test_x):
     split_x_train, split_x_test, split_y_train, split_y_test = train_test_split(train_x, train_y, test_size=0.3,
-                                                                                random_state=10)
+                                                                                random_state=CONST_RANDOM_STATE)
 
     algorithm.fit(split_x_train, split_y_train)
-    #accuracy = algorithm.score(split_x_test, split_y_test)
+    # accuracy = algorithm.score(split_x_test, split_y_test)10
     predictions = algorithm.predict(split_x_test)
 
     accuracy = accuracy_score(split_y_test, predictions)
@@ -113,22 +111,21 @@ def RunRandomForestClassifier(train_x, train_y, test_x):
     # constants
     seed = 7
 
-    # algorithm = tree.DecisionTreeClassifier(random_state=seed, criterion="gini", max_depth=2)
-    algorithm = RandomForestClassifier(10, criterion="entropy", random_state=seed)
+    algorithm = RandomForestClassifier(10, criterion="entropy", random_state=CONST_RANDOM_STATE)
 
     startTraining(algorithm, train_x, train_y, test_x)
 
 
 def RunKNeighborsClassifier(train_x, train_y, test_x):
     print("KNeighborsClassifier")
-    algorithm = KNeighborsClassifier()
+    algorithm = KNeighborsClassifier(6, p=1)
 
     startTraining(algorithm, train_x, train_y, test_x)
 
 
-def RunGaussianProcessClassifier(train_x, train_y, test_x):
-    print("GaussianProcessClassifier")
-    algorithm = GaussianProcessClassifier(1.0 * RBF(1.0))
+def RunSVC(train_x, train_y, test_x):
+    print("SVC")
+    algorithm = SVC(kernel="rbf", C=0.50, random_state=CONST_RANDOM_STATE)
 
     startTraining(algorithm, train_x, train_y, test_x)
 
@@ -146,13 +143,14 @@ def RunGaussianProcessClassifier(train_x, train_y, test_x):
 
 def RunKMeans(train_x, train_y, test_x):
     print("KMeans")
-    algorithm = KMeans(2)
+    algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=2, init="random")
 
     startTraining(algorithm, train_x, train_y, test_x)
 
+
 def RunAdaBoostClassifier(train_x, train_y, test_x):
     print("AdaBoostClassifier")
-    algorithm = AdaBoostClassifier()
+    algorithm = AdaBoostClassifier(n_estimators=50, base_estimator=SVC(kernel="linear", C=1, random_state=CONST_RANDOM_STATE), algorithm="SAMME")
 
     startTraining(algorithm, train_x, train_y, test_x)
 
@@ -199,7 +197,7 @@ def main():
     compined_sets = oneHotEncoding(compined_sets, [1, 5, 7, 8])
 
     # Normalize data
-    compined_sets = normalizeArray(compined_sets, [0, 1, 4])
+    compined_sets = normalize_array(compined_sets, [0, 1, 4])
 
     # print(compined_sets[0])
     # split sets
@@ -210,16 +208,16 @@ def main():
     print("            Classification Algorithms")
     print("------------------------------------------------------")
 
-    RunRandomForestClassifier(train_x, train_y, test_x)
-    RunKNeighborsClassifier(train_x, train_y, test_x)
+    #RunRandomForestClassifier(train_x, train_y, test_x)
+    #RunKNeighborsClassifier(train_x, train_y, test_x)
     RunAdaBoostClassifier(train_x, train_y, test_x)
-    RunGaussianProcessClassifier(train_x, train_y, test_x)
+    #RunSVC(train_x, train_y, test_x)
 
     print("------------------------------------------------------")
     print("            Clustering algorithm")
     print("------------------------------------------------------")
 
-    RunKMeans(train_x, train_y, test_x)
+    #RunKMeans(train_x, train_y, test_x)
 
 
 if __name__ == "__main__":
