@@ -118,14 +118,14 @@ def RunRandomForestClassifier(train_x, train_y, test_x):
 
 def RunKNeighborsClassifier(train_x, train_y, test_x):
     print("KNeighborsClassifier")
-    algorithm = KNeighborsClassifier(6, p=1)
+    algorithm = KNeighborsClassifier(2)
 
     startTraining(algorithm, train_x, train_y, test_x)
 
 
 def RunSVC(train_x, train_y, test_x):
     print("SVC")
-    algorithm = SVC(kernel="rbf", C=0.50, random_state=CONST_RANDOM_STATE)
+    algorithm = SVC(kernel="linear", C=1, random_state=CONST_RANDOM_STATE)
 
     startTraining(algorithm, train_x, train_y, test_x)
 
@@ -143,14 +143,14 @@ def RunSVC(train_x, train_y, test_x):
 
 def RunKMeans(train_x, train_y, test_x):
     print("KMeans")
-    algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=2, init="random")
+    algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=2)
 
     startTraining(algorithm, train_x, train_y, test_x)
 
 
 def RunAdaBoostClassifier(train_x, train_y, test_x):
     print("AdaBoostClassifier")
-    algorithm = AdaBoostClassifier(n_estimators=50, base_estimator=SVC(kernel="linear", C=1, random_state=CONST_RANDOM_STATE), algorithm="SAMME")
+    algorithm = AdaBoostClassifier()
 
     startTraining(algorithm, train_x, train_y, test_x)
 
@@ -208,16 +208,16 @@ def main():
     print("            Classification Algorithms")
     print("------------------------------------------------------")
 
-    #RunRandomForestClassifier(train_x, train_y, test_x)
-    #RunKNeighborsClassifier(train_x, train_y, test_x)
+    RunRandomForestClassifier(train_x, train_y, test_x)
+    RunKNeighborsClassifier(train_x, train_y, test_x)
     RunAdaBoostClassifier(train_x, train_y, test_x)
-    #RunSVC(train_x, train_y, test_x)
+    RunSVC(train_x, train_y, test_x)
 
     print("------------------------------------------------------")
     print("            Clustering algorithm")
     print("------------------------------------------------------")
 
-    #RunKMeans(train_x, train_y, test_x)
+    RunKMeans(train_x, train_y, test_x)
 
 
 if __name__ == "__main__":
