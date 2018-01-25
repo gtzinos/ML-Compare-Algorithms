@@ -181,9 +181,7 @@ def getTestList():
     return testList
 
 
-def main()
-     = cv2.compareHist([], [], cv2.cv.CV_COMP_CHISQR)
-
+def main():
     # Train set
     trainList = getTrainList()
     # Test set
