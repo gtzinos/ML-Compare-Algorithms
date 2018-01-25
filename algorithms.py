@@ -14,7 +14,7 @@ def show_predictions(all_unlabeled_data, predictions):
     for index,current_unlabeled in enumerate(all_unlabeled_data):
         print(str(current_unlabeled) + " is " + str(predictions[index]))
 
-def fit_and_predict(algorithm, train_x, train_y, test_x):
+def fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions=False):
     split_x_train, split_x_test, split_y_train, split_y_test = train_test_split(train_x, train_y, test_size=0.3,
                                                                                 random_state=CONST_RANDOM_STATE)
 
@@ -37,6 +37,9 @@ def fit_and_predict(algorithm, train_x, train_y, test_x):
 
     if hasattr(algorithm, 'history'):
         ShowGraph(algorithm)
+
+    if showPredictions:
+        show_predictions(test_x, predictions)
 
     return predictions
 
@@ -63,26 +66,26 @@ def ShowGraph(algorithm):
     plot.legend(['train', 'test'], loc='upper left')
     plot.show()
 
-def RunRandomForestClassifier(train_x, train_y, test_x, n_estimators=10, criterion="entropy"):
+def RunRandomForestClassifier(train_x, train_y, test_x, showPredictions=False, n_estimators=10, criterion="entropy"):
     print("Random Forest")
 
     algorithm = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, random_state=CONST_RANDOM_STATE)
 
-    return fit_and_predict(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions)
 
 
-def RunKNeighborsClassifier(train_x, train_y, test_x, n_neighbors=2):
+def RunKNeighborsClassifier(train_x, train_y, test_x, showPredictions=False, n_neighbors=2):
     print("KNeighborsClassifier")
     algorithm = KNeighborsClassifier(n_neighbors=n_neighbors)
 
-    return fit_and_predict(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions)
 
 
-def RunSVC(train_x, train_y, test_x, c=1):
+def RunSVC(train_x, train_y, test_x, showPredictions=False, c=1):
     print("SVC")
     algorithm = SVC(kernel="linear", C=c, random_state=CONST_RANDOM_STATE)
 
-    return fit_and_predict(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions)
 
     # KNeighborsClassifier(3),
     # SVC(kernel="linear", C=0.025),
@@ -96,15 +99,15 @@ def RunSVC(train_x, train_y, test_x, c=1):
     # QuadraticDiscriminantAnalysis()]
 
 
-def RunKMeans(train_x, train_y, test_x, n_clusters=2):
+def RunKMeans(train_x, train_y, test_x, showPredictions=False, n_clusters=2):
     print("KMeans")
     algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=n_clusters)
 
-    return fit_and_predict(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions)
 
 
-def RunAdaBoostClassifier(train_x, train_y, test_x):
+def RunAdaBoostClassifier(train_x, train_y, test_x, showPredictions=False):
     print("AdaBoostClassifier")
     algorithm = AdaBoostClassifier()
 
-    return fit_and_predict(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions)

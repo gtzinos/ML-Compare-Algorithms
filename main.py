@@ -61,25 +61,19 @@ def main():
     print("            Classification Algorithms                 ")
     print("------------------------------------------------------")
 
-    predictions = RunRandomForestClassifier(train_x, train_y, test_x)
-    #show_predictions(test_x, predictions)
+    RunRandomForestClassifier(train_x, train_y, test_x)
 
-    predictions = RunKNeighborsClassifier(train_x, train_y, test_x)
-    #show_predictions(test_x, predictions)
+    RunKNeighborsClassifier(train_x, train_y, test_x)
 
-    predictions = RunAdaBoostClassifier(train_x, train_y, test_x)
-    #show_predictions(test_x, predictions)
+    RunAdaBoostClassifier(train_x, train_y, test_x)
 
-    predictions = RunSVC(train_x, train_y, test_x)
-    #show_predictions(test_x, predictions)
+    RunSVC(train_x, train_y, test_x)
 
     print("------------------------------------------------------")
     print("            Clustering algorithm                      ")
     print("------------------------------------------------------")
 
     RunKMeans(train_x, train_y, test_x)
-    #show_predictions(test_x, predictions)
-
 
 if __name__ == "__main__":
     main()
