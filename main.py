@@ -61,26 +61,24 @@ def main():
     print("            Classification Algorithms")
     print("------------------------------------------------------")
 
-    all_unlabeled_data = testList = importFile('test.csv')[1:]
-
     predictions = RunRandomForestClassifier(train_x, train_y, test_x)
-    #show_predictions(all_unlabeled_data, predictions)
+    #show_predictions(test_x, predictions)
 
     predictions = RunKNeighborsClassifier(train_x, train_y, test_x)
-    #show_predictions(all_unlabeled_data, predictions)
+    #show_predictions(test_x, predictions)
 
     predictions = RunAdaBoostClassifier(train_x, train_y, test_x)
-    #show_predictions(all_unlabeled_data, predictions)
+    #show_predictions(test_x, predictions)
 
     predictions = RunSVC(train_x, train_y, test_x)
-    #show_predictions(all_unlabeled_data, predictions)
+    #show_predictions(test_x, predictions)
 
     print("------------------------------------------------------")
     print("            Clustering algorithm")
     print("------------------------------------------------------")
 
     RunKMeans(train_x, train_y, test_x)
-    #show_predictions(all_unlabeled_data, predictions)
+    #show_predictions(test_x, predictions)
 
 
 if __name__ == "__main__":
