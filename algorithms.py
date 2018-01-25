@@ -1,4 +1,3 @@
-
 from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
@@ -10,9 +9,11 @@ import matplotlib.pyplot as plot
 # constants
 CONST_RANDOM_STATE = 1000
 
+
 def show_predictions(all_unlabeled_data, predictions):
-    for index,current_unlabeled in enumerate(all_unlabeled_data):
+    for index, current_unlabeled in enumerate(all_unlabeled_data):
         print(str(current_unlabeled) + " is " + str(predictions[index]))
+
 
 def fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions=False):
     split_x_train, split_x_test, split_y_train, split_y_test = train_test_split(train_x, train_y, test_size=0.3,
@@ -57,6 +58,7 @@ def fit_and_predict(algorithm, train_x, train_y, test_x, showPredictions=False):
     # cross_val_predict(algorithm, test_x)
     # print(predictions)
 
+
 def ShowGraph(algorithm):
     plot.plot(algorithm.history['loss'])
     plot.plot(algorithm.history['val_loss'])
@@ -65,6 +67,7 @@ def ShowGraph(algorithm):
     plot.xlabel('epoch')
     plot.legend(['train', 'test'], loc='upper left')
     plot.show()
+
 
 def RunRandomForestClassifier(train_x, train_y, test_x, showPredictions=False, n_estimators=10, criterion="entropy"):
     print("Random Forest")

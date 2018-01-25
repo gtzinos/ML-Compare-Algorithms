@@ -5,10 +5,12 @@ from algorithms import *
 
 numpy.set_printoptions(threshold=numpy.nan)
 
+
 def importFile(fileName):
     with open(fileName, 'r') as f:
         reader = csv.reader(f)
         return np.array(list(reader))
+
 
 def getTrainList():
     # Import set
@@ -18,6 +20,7 @@ def getTrainList():
     # Transform empty strings to 0
     trainList[trainList == ''] = '0'
     return trainList
+
 
 def getTestList():
     # Import set
@@ -30,6 +33,7 @@ def getTestList():
     testList[testList == ''] = '0'
 
     return testList
+
 
 def main():
     # Train set
@@ -74,6 +78,7 @@ def main():
     print("------------------------------------------------------")
 
     RunKMeans(train_x, train_y, test_x)
+
 
 if __name__ == "__main__":
     main()
