@@ -1,18 +1,16 @@
 import csv
 
+import cv2
 import matplotlib.pyplot as plot
 import numpy
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import RBF
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.svm import SVC
-from sklearn.tree import tree
 
 numpy.set_printoptions(threshold=numpy.nan)
 
@@ -57,8 +55,11 @@ def normalize_array(array, indexes):
 
     return array
 
+def show_predictions(all_unlabeled_data, predictions):
+    for index,current_unlabeled in enumerate(all_unlabeled_data):
+        print(str(current_unlabeled) + " is " + str(predictions[index]))
 
-def startTraining(algorithm, train_x, train_y, test_x):
+def fit_and_predict(algorithm, train_x, train_y, test_x):
     split_x_train, split_x_test, split_y_train, split_y_test = train_test_split(train_x, train_y, test_size=0.3,
                                                                                 random_state=CONST_RANDOM_STATE)
 
@@ -78,6 +79,8 @@ def startTraining(algorithm, train_x, train_y, test_x):
 
     # predict unknown set
     predictions = algorithm.predict(test_x)
+
+    return predictions
 
     # ShowGraph(algorithm)
     # print(predictions)
@@ -113,21 +116,21 @@ def RunRandomForestClassifier(train_x, train_y, test_x):
 
     algorithm = RandomForestClassifier(10, criterion="entropy", random_state=CONST_RANDOM_STATE)
 
-    startTraining(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x)
 
 
 def RunKNeighborsClassifier(train_x, train_y, test_x):
     print("KNeighborsClassifier")
     algorithm = KNeighborsClassifier(2)
 
-    startTraining(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x)
 
 
 def RunSVC(train_x, train_y, test_x):
     print("SVC")
     algorithm = SVC(kernel="linear", C=1, random_state=CONST_RANDOM_STATE)
 
-    startTraining(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x)
 
     # KNeighborsClassifier(3),
     # SVC(kernel="linear", C=0.025),
@@ -145,14 +148,14 @@ def RunKMeans(train_x, train_y, test_x):
     print("KMeans")
     algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=2)
 
-    startTraining(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x)
 
 
 def RunAdaBoostClassifier(train_x, train_y, test_x):
     print("AdaBoostClassifier")
     algorithm = AdaBoostClassifier()
 
-    startTraining(algorithm, train_x, train_y, test_x)
+    return fit_and_predict(algorithm, train_x, train_y, test_x)
 
 
 def getTrainList():
@@ -178,7 +181,9 @@ def getTestList():
     return testList
 
 
-def main():
+def main()
+     = cv2.compareHist([], [], cv2.cv.CV_COMP_CHISQR)
+
     # Train set
     trainList = getTrainList()
     # Test set
@@ -208,16 +213,26 @@ def main():
     print("            Classification Algorithms")
     print("------------------------------------------------------")
 
-    RunRandomForestClassifier(train_x, train_y, test_x)
-    RunKNeighborsClassifier(train_x, train_y, test_x)
-    RunAdaBoostClassifier(train_x, train_y, test_x)
-    RunSVC(train_x, train_y, test_x)
+    all_unlabeled_data = testList = importFile('test.csv')[1:]
+
+    predictions = RunRandomForestClassifier(train_x, train_y, test_x)
+    #show_predictions(all_unlabeled_data, predictions)
+
+    predictions = RunKNeighborsClassifier(train_x, train_y, test_x)
+    #show_predictions(all_unlabeled_data, predictions)
+
+    predictions = RunAdaBoostClassifier(train_x, train_y, test_x)
+    #show_predictions(all_unlabeled_data, predictions)
+
+    predictions = RunSVC(train_x, train_y, test_x)
+    #show_predictions(all_unlabeled_data, predictions)
 
     print("------------------------------------------------------")
     print("            Clustering algorithm")
     print("------------------------------------------------------")
 
     RunKMeans(train_x, train_y, test_x)
+    #show_predictions(all_unlabeled_data, predictions)
 
 
 if __name__ == "__main__":
