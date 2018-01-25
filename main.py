@@ -80,9 +80,11 @@ def fit_and_predict(algorithm, train_x, train_y, test_x):
     # predict unknown set
     predictions = algorithm.predict(test_x)
 
+    if hasattr(algorithm, 'history'):
+        ShowGraph(algorithm)
+
     return predictions
 
-    # ShowGraph(algorithm)
     # print(predictions)
 
     # scoring = ['recall', 'f1', 'accuracy']
@@ -108,27 +110,24 @@ def ShowGraph(algorithm):
     plot.show()
 
 
-def RunRandomForestClassifier(train_x, train_y, test_x):
+def RunRandomForestClassifier(train_x, train_y, test_x, n_estimators=10, criterion="entropy"):
     print("Random Forest")
 
-    # constants
-    seed = 7
-
-    algorithm = RandomForestClassifier(10, criterion="entropy", random_state=CONST_RANDOM_STATE)
+    algorithm = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, random_state=CONST_RANDOM_STATE)
 
     return fit_and_predict(algorithm, train_x, train_y, test_x)
 
 
-def RunKNeighborsClassifier(train_x, train_y, test_x):
+def RunKNeighborsClassifier(train_x, train_y, test_x, n_neighbors=2):
     print("KNeighborsClassifier")
-    algorithm = KNeighborsClassifier(2)
+    algorithm = KNeighborsClassifier(n_neighbors=n_neighbors)
 
     return fit_and_predict(algorithm, train_x, train_y, test_x)
 
 
-def RunSVC(train_x, train_y, test_x):
+def RunSVC(train_x, train_y, test_x, c=1):
     print("SVC")
-    algorithm = SVC(kernel="linear", C=1, random_state=CONST_RANDOM_STATE)
+    algorithm = SVC(kernel="linear", C=c, random_state=CONST_RANDOM_STATE)
 
     return fit_and_predict(algorithm, train_x, train_y, test_x)
 
@@ -144,9 +143,9 @@ def RunSVC(train_x, train_y, test_x):
     # QuadraticDiscriminantAnalysis()]
 
 
-def RunKMeans(train_x, train_y, test_x):
+def RunKMeans(train_x, train_y, test_x, n_clusters=2):
     print("KMeans")
-    algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=2)
+    algorithm = KMeans(random_state=CONST_RANDOM_STATE, n_clusters=n_clusters)
 
     return fit_and_predict(algorithm, train_x, train_y, test_x)
 
