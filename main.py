@@ -58,7 +58,7 @@ def main():
     test_x = compined_sets[trainLength:]
 
     print("------------------------------------------------------")
-    print("            Classification Algorithms")
+    print("            Classification Algorithms                 ")
     print("------------------------------------------------------")
 
     predictions = RunRandomForestClassifier(train_x, train_y, test_x)
@@ -74,7 +74,7 @@ def main():
     #show_predictions(test_x, predictions)
 
     print("------------------------------------------------------")
-    print("            Clustering algorithm")
+    print("            Clustering algorithm                      ")
     print("------------------------------------------------------")
 
     RunKMeans(train_x, train_y, test_x)
